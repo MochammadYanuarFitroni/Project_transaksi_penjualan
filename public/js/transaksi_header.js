@@ -11,9 +11,9 @@ document.querySelector('#inputH').addEventListener('click', function(){
         tgl_faktur: document.querySelector('#tgl_faktur').value,
         kode_customer: document.querySelector('#kode_customer').value,
         kode_tjen: document.querySelector('#kode_tjen').value,
-        total_bruto: parseFloat(document.querySelector('#diskon').value) || 0,
-        total_diskon: parseFloat(document.querySelector('#bruto').value) || 0,
-        total_jumlah: parseFloat(document.querySelector('#jumlah').value) || 0
+        total_bruto: parseFloat(document.querySelector('#total_bruto').value.replace(/Rp. /, '').replace(/,/g, '')) || 0,
+        total_diskon: parseFloat(document.querySelector('#total_diskon').value.replace(/Rp. /, '').replace(/,/g, '')) || 0,
+        total_jumlah: parseFloat(document.querySelector('#total_jumlah').value.replace(/Rp. /, '').replace(/,/g, '')) || 0
     };
     console.log(data)
 

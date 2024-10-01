@@ -41,6 +41,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Edit Barang</button>
+        <a href="/barang" class="btn btn-secondary">Batal</a>
       </form>
   </div>
 @endsection

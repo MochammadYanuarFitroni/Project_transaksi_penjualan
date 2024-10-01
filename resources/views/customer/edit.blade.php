@@ -31,6 +31,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Edit data customer</button>
+        <a href="/customer" class="btn btn-secondary">Batal</a>
       </form>
   </div>
 @endsection

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('t_juals', function (Blueprint $table) {
             // $table->id();
-            $table->char('no_faktur', 5);
+            $table->char('no_faktur', 6);
             $table->primary('no_faktur');
             $table->char('kode_customer', 4);
             $table->char('kode_tjen', 1);

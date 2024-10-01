@@ -14,7 +14,7 @@ class transaksiController extends Controller
     {
         // dd($request);
         $validateNewData = $request -> validate([
-            'no_faktur' => 'required|max:5|unique:t_juals,no_faktur',
+            'no_faktur' => 'required|max:6|unique:t_juals,no_faktur',
             'kode_customer' => 'required|max:4',
             'tgl_faktur' => 'required|date|date_format:Y-m-d',
             'kode_tjen' => 'required|max:1',
@@ -37,7 +37,7 @@ class transaksiController extends Controller
         // Validasi data yang diterima
         $validatedData = $request->validate([
             'items' => 'required|array',
-            'items.*.no_faktur' => 'required|max:5',
+            'items.*.no_faktur' => 'required|max:6',
             'items.*.kode_barang' => 'required|max:10',
             'items.*.harga' => 'required|numeric',
             'items.*.qty' => 'required|integer|min:1',
@@ -90,7 +90,7 @@ class transaksiController extends Controller
     {
         // Validasi input yang masuk
         $validateUp = $request->validate([
-            'no_faktur' => 'required|max:5|unique:t_juals,no_faktur,' . $request->no_faktur . ',no_faktur',
+            'no_faktur' => 'required|max:6|unique:t_juals,no_faktur,' . $request->no_faktur . ',no_faktur',
             'kode_customer' => 'required|max:4',
             'tgl_faktur' => 'required|date|date_format:Y-m-d',
             'kode_tjen' => 'required|max:1',
@@ -122,7 +122,7 @@ class transaksiController extends Controller
     {
         // Validasi no_faktur
         $request->validate([
-            'no_faktur' => 'required|max:5',
+            'no_faktur' => 'required|max:6',
         ]);
 
         // Mengambil data t_jual dan detail dari t_djual

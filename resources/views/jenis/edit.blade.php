@@ -31,6 +31,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Edit data jenis transaksi</button>
+        <a href="/tjenis" class="btn btn-secondary">Batal</a>
       </form>
   </div>
 @endsection

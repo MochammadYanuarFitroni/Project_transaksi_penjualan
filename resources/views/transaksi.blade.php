@@ -4,7 +4,7 @@
     <h2 class="text-center">Transaksi Penjualan</h2>
     <a href="/barang" class="btn btn-primary">Master Barang</a>
     <a href="/customer" class="btn btn-primary">Master Customer</a>
-    <a href="/tjenis" class="btn btn-primary">Master Jenis</a>
+    <a href="/tjenis" class="btn btn-primary">Master Jenis Transaksi</a>
     @if(session('success'))
         <div class="alert alert-success mt-3">
             {{ session('success') }}
@@ -98,7 +98,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="harga_barang" class="form-label">Harga Barang</label>
-                        <input type="text" class="form-control" id="harga_barang" name="harga_barang" value="Rp 0" readonly>
+                        <input type="text" class="form-control" id="harga_barang" name="harga_barang" value="Rp. 0" readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -112,11 +112,11 @@
                     </div>
                     <div class="col-md-4">
                         <label for="bruto" class="form-label">Bruto</label>
-                        <input type="text" class="form-control" id="bruto" name="bruto" value="Rp 0" readonly>
+                        <input type="text" class="form-control" id="bruto" name="bruto" value="Rp. 0" readonly>
                     </div>
                     <div class="col-md-4">
                         <label for="jumlah" class="form-label">Jumlah</label>
-                        <input type="text" class="form-control" id="jumlah" name="jumlah" value="Rp 0" readonly>
+                        <input type="text" class="form-control" id="jumlah" name="jumlah" value="Rp. 0" readonly>
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                             <div class="d-flex align-items-center">
                                 <label for="total_bruto" class="form-label">Total Bruto</label>
                                 <div class="col-sm-9 ms-auto">
-                                    <input type="text" class="form-control" id="total_bruto" value="Rp 0" readonly>
+                                    <input type="text" class="form-control" id="total_bruto" value="Rp. 0" readonly>
                                     <input type="hidden" name="total_bruto" id="hidden_total_bruto" value="0">
                                 </div>
                             </div>
@@ -160,7 +160,7 @@
                             <div class="d-flex align-items-center">
                                 <label for="total_diskon" class="form-label">Total Diskon</label>
                                 <div class="col-sm-9 ms-auto">
-                                    <input type="text" class="form-control" id="total_diskon" value="Rp 0" readonly>
+                                    <input type="text" class="form-control" id="total_diskon" value="Rp. 0" readonly>
                                     <input type="hidden" name="total_diskon" id="hidden_total_diskon" value="0">
                                 </div>
                             </div>
@@ -169,7 +169,7 @@
                             <div class="d-flex align-items-center">
                                 <label for="total_jumlah" class="form-label">Total Jumlah</label>
                                 <div class="col-sm-9 ms-auto">
-                                    <input type="text" class="form-control" id="total_jumlah" value="Rp 0" readonly>
+                                    <input type="text" class="form-control" id="total_jumlah" value="Rp. 0" readonly>
                                     <input type="hidden" name="total_jumlah" id="hidden_total_jumlah" value="0">
                                 </div>
                             </div>
@@ -233,11 +233,11 @@
         function clearFormBarang() {
             document.getElementById('kode_barang').value = '';
             document.getElementById('nama_barang').value = '';
-            document.getElementById('harga_barang').value = 'Rp 0';
+            document.getElementById('harga_barang').value = 'Rp. 0';
             document.getElementById('qty').value = '0';
             document.getElementById('diskon').value = '0';
-            document.getElementById('bruto').value = 'Rp 0';
-            document.getElementById('jumlah').value = 'Rp 0';
+            document.getElementById('bruto').value = 'Rp. 0';
+            document.getElementById('jumlah').value = 'Rp. 0';
             document.getElementById('t_djual_id').value = ''; // Reset hidden input
         }
 
@@ -258,9 +258,9 @@
             tableBody.innerHTML = ''; // Menghapus semua isi tabel
 
             //total
-            document.getElementById('total_bruto').value = 'Rp 0';
-            document.getElementById('total_diskon').value = 'Rp 0';
-            document.getElementById('total_jumlah').value = 'Rp 0';
+            document.getElementById('total_bruto').value = 'Rp. 0';
+            document.getElementById('total_diskon').value = 'Rp. 0';
+            document.getElementById('total_jumlah').value = 'Rp. 0';
 
             //hidden
             document.getElementById('hidden_total_jumlah').value = '0';

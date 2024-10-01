@@ -20,9 +20,12 @@ function toggleButtons(enable) {
     batalButton.disabled = !enable;
 }
 
-// Event Listener untuk Kode Barang
-kodeBarang.addEventListener("keyup", function () {
+kodeBarang.addEventListener('keyup', function(){
     kodeBarang.value = kodeBarang.value.toUpperCase(); // Mengubah Kode Barang ke huruf kapital
+})
+
+// Event Listener untuk Kode Barang
+kodeBarang.addEventListener("change", function () {
     let kode_barang = kodeBarang.value;
     if (kode_barang.length > 0) {
         // Fetch data barang berdasarkan Kode Barang yang diinput
@@ -46,6 +49,9 @@ kodeBarang.addEventListener("keyup", function () {
                 }
             })
             .catch(error => {
+                alert('data barang tidak ditemukan')
+                namaBarang.value = "";
+                hargaBarang.value = "0";
                 console.error('Error:', error);
                 // Jika ada error, nonaktifkan tombol
                 toggleButtons(false);
@@ -205,14 +211,22 @@ document.querySelector('#add-item').addEventListener('click', function (e) {
             alert('Data baru berhasil disimpan.');
             console.log('Data baru:', result.newItems);
             simpanButton.disabled = true
+            inputButton.disabled = true
+            batalButton.disabled = true
         } else if (result.status === 400) {
-            alert('Beberapa data sudah ada di database.');
+            // alert('Beberapa data sudah ada di database.');
+            alert('Data terbaru berhasil disimpan.');
             console.log('Data yang sudah ada:', result.existingItems);
             console.log('Data yang berhasil disimpan:', result.newItems);
             simpanButton.disabled = true
+            inputButton.disabled = true
+            batalButton.disabled = true
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        alert("No faktur tidak didalam database")
+        console.error('Error:', error)
+    });
 });
 
 
