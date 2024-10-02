@@ -9,6 +9,15 @@ class t_djual extends Model
 {
     use HasFactory;
 
+    // Nama tabel
+    protected $table = 't_djuals';
+
+    // Primary key gabungan
+    protected $primaryKey = ['no_faktur', 'kode_barang'];
+    public $incrementing = false; // Primary key bukan auto-increment
+    protected $keyType = 'string'; // Tipe data primary key
+
+    // Kolom yang bisa diisi
     protected $fillable = [
         'no_faktur',
         'kode_barang',
@@ -28,6 +37,14 @@ class t_djual extends Model
     // Relasi ke model Barang
     public function barang()
     {
-        return $this->belongsTo(Barang::class, 'kode_barang', 'kode_barang');
+        return $this->belongsTo(barang::class, 'kode_barang', 'kode_barang');
+    }
+
+    // Menentukan kunci gabungan untuk operasi simpan (update/delete)
+    protected function setKeysForSaveQuery($query)
+    {
+        return $query
+            ->where('no_faktur', $this->getAttribute('no_faktur'))
+            ->where('kode_barang', $this->getAttribute('kode_barang'));
     }
 }

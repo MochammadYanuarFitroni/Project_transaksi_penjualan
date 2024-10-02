@@ -37,6 +37,9 @@ Route::get('/get-barang/{kode_barang}', function ($kode_barang) {
 // Route untuk menyimpan transaksi
 // Route::post('/', [transaksiController::class, 'store'])->name('transaksi.store');
 Route::post('/tambah-barang', [transaksiController::class, 'tambahBarang'])->name('transaksi.tambahBarang');
+// Route::post('/tambah-barang', [transaksiController::class, 'tambahBarang'])->name('transaksi.tambahBarang');
+Route::post('/faktur/manage', [transaksiController::class, 'manageFaktur'])->name('transaksi.tambahBarang');
+
 Route::post('/input-header', [transaksiController::class, 'inputHeader'])->name('transaksi.inputHeader');
 Route::put('/update-faktur', [transaksiController::class, 'updateDataFaktur'])->name('transaksi.updateDataFaktur');
 Route::post('/cari-data', [transaksiController::class, 'cariData'])->name('transaksi.cariData');
@@ -50,8 +53,13 @@ Route::get('/preview/{no_faktur}', [transaksiController::class, 'previewFaktur']
 Route::get('/exportCsv/{no_faktur}', [TransaksiController::class, 'exportCsv'])->name('transaksi.exportCsv');
 
 
-Route::delete('/hapus-barang/{id}', [transaksiController::class, 'hapusBarang'])->name('transaksi.hapusBarang');
-Route::put('/update-barang/{id}', [transaksiController::class, 'updateBarang'])->name('transaksi.updateBarang');
+// Route::delete('/hapus-barang/{id}', [transaksiController::class, 'hapusBarang'])->name('transaksi.hapusBarang');
+Route::delete('/hapus-barang/{no_faktur}/{kode_barang}', [transaksiController::class, 'hapusBarang'])->name('transaksi.hapusBarang');
+
+// Route::put('/update-barang/{no_faktur}/{kode_barang}', [transaksiController::class, 'updateBarang'])->name('transaksi.updateBarang');
+// Route::put('/update-barang/{kode_barang}', [transaksiController::class, 'updateBarang'])->name('transaksi.updateBarang');
+Route::put('/update-barang/{no_faktur}/{kode_barang}', [transaksiController::class, 'updateBarang'])->name('transaksi.updateBarang');
+
 
 
 Route::resource('barang', barangController::class);

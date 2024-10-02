@@ -12,16 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('t_djuals', function (Blueprint $table) {
-            $table->id();
+            // $table->id();
             $table->char('no_faktur', 6);
             // $table->primary('no_faktur');
             $table->char('kode_barang', 10);
+            // $table->primary('kode_barang');
             $table->decimal('harga', 15, 2);
             $table->decimal('qty', 15, 2);
             $table->decimal('diskon', 15, 2);
             $table->decimal('bruto', 15, 2);
             $table->decimal('jumlah', 15, 2);
             $table->timestamps();
+
+            $table->primary(['no_faktur', 'kode_barang']);
 
             $table->foreign('kode_barang')->references('kode_barang')->on('barangs')->onDelete('cascade');
             $table->foreign('no_faktur')->references('no_faktur')->on('t_juals')->onDelete('cascade');

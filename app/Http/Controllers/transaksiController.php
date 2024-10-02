@@ -32,7 +32,93 @@ class transaksiController extends Controller
         ]);
     }
 
-    public function tambahBarang(Request $request) 
+    // public function tambahBarang(Request $request) 
+    // {
+    //     // Validasi data yang diterima
+    //     $validatedData = $request->validate([
+    //         'items' => 'required|array',
+    //         'items.*.no_faktur' => 'required|max:6',
+    //         'items.*.kode_barang' => 'required|max:10',
+    //         'items.*.harga' => 'required|numeric',
+    //         'items.*.qty' => 'required|integer|min:1',
+    //         'items.*.diskon' => 'required|numeric|min:0|max:100',
+    //         'items.*.bruto' => 'required|numeric',
+    //         'items.*.jumlah' => 'required|numeric',
+    //     ]);
+
+    //     // Array untuk menyimpan item yang sudah ada dan yang baru
+    //     $existingItems = [];
+    //     $newItems = [];
+
+    //     // Loop melalui setiap item dan lakukan pengecekan sebelum disimpan
+    //     foreach ($validatedData['items'] as $item) {
+    //         // Pengecekan apakah data dengan no_faktur dan kode_barang sudah ada di database
+    //         $exists = t_djual::where('no_faktur', $item['no_faktur'])
+    //                         ->where('kode_barang', $item['kode_barang'])
+    //                         ->exists();
+
+    //         if ($exists) {
+    //             // Jika data sudah ada, simpan ke array existingItems
+    //             $existingItems[] = $item;
+    //         } else {
+    //             // Jika tidak ada, simpan item baru ke database
+    //             t_djual::create($item);
+    //             $newItems[] = $item;
+    //         }
+    //     }
+
+    //     // Mengembalikan respons ke front-end
+    //     if (count($existingItems) > 0) {
+    //         return response()->json([
+    //             'status' => 400,
+    //             'message' => 'Beberapa data sudah ada di database.',
+    //             'existingItems' => $existingItems,
+    //             'newItems' => $newItems
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'method' => 'POST',
+    //         'status' => 200,
+    //         'message' => 'Data berhasil disimpan.',
+    //         'newItems' => $newItems
+    //     ]);
+    // }
+
+
+    // public function updateDataFaktur(Request $request)
+    // {
+    //     // Validasi input yang masuk
+    //     $validateUp = $request->validate([
+    //         'no_faktur' => 'required|max:6|unique:t_juals,no_faktur,' . $request->no_faktur . ',no_faktur',
+    //         'kode_customer' => 'required|max:4',
+    //         'tgl_faktur' => 'required|date|date_format:Y-m-d',
+    //         'kode_tjen' => 'required|max:1',
+    //         'total_bruto' => 'required|numeric',
+    //         'total_diskon' => 'required|numeric',
+    //         'total_jumlah' => 'required|numeric',
+    //     ]);
+
+    //     try {
+    //         // Cari faktur berdasarkan no_faktur yang diinput
+    //         $nF = t_jual::where('no_faktur', $request->no_faktur)->first();
+
+    //         if (!$nF) {
+    //             return response()->json(['success' => false, 'message' => 'Faktur tidak ditemukan'], 404);
+    //         }
+
+    //         // Update faktur dengan data yang divalidasi
+    //         $nF->update($validateUp);
+
+    //         // Kembalikan pesan sukses ke halaman sebelumnya
+    //         return redirect()->back()->with('success', 'Faktur berhasil diperbarui');
+    //     } catch (\Exception $e) {
+    //         // Kembalikan pesan error jika terjadi exception
+    //         return back()->withErrors(['message' => 'Terjadi kesalahan saat memperbarui faktur: ' . $e->getMessage()]);
+    //     }
+    // }
+
+    public function manageFaktur(Request $request) 
     {
         // Validasi data yang diterima
         $validatedData = $request->validate([
@@ -44,7 +130,27 @@ class transaksiController extends Controller
             'items.*.diskon' => 'required|numeric|min:0|max:100',
             'items.*.bruto' => 'required|numeric',
             'items.*.jumlah' => 'required|numeric',
+            'no_faktur' => 'sometimes|required|max:6|unique:t_juals,no_faktur,' . $request->no_faktur . ',no_faktur',
+            'kode_customer' => 'sometimes|required|max:4',
+            'tgl_faktur' => 'sometimes|required|date|date_format:Y-m-d',
+            'kode_tjen' => 'sometimes|required|max:1',
+            'total_bruto' => 'sometimes|required|numeric',
+            'total_diskon' => 'sometimes|required|numeric',
+            'total_jumlah' => 'sometimes|required|numeric',
         ]);
+
+        // Cek jika no_faktur ada untuk update
+        if (isset($request->no_faktur)) {
+            // Cari faktur berdasarkan no_faktur yang diinput
+            $nF = t_jual::where('no_faktur', $request->no_faktur)->first();
+
+            if (!$nF) {
+                return response()->json(['success' => false, 'message' => 'Faktur tidak ditemukan'], 404);
+            }
+
+            // Update faktur dengan data yang divalidasi
+            $nF->update($validatedData);
+        }
 
         // Array untuk menyimpan item yang sudah ada dan yang baru
         $existingItems = [];
@@ -85,38 +191,6 @@ class transaksiController extends Controller
         ]);
     }
 
-
-    public function updateDataFaktur(Request $request)
-    {
-        // Validasi input yang masuk
-        $validateUp = $request->validate([
-            'no_faktur' => 'required|max:6|unique:t_juals,no_faktur,' . $request->no_faktur . ',no_faktur',
-            'kode_customer' => 'required|max:4',
-            'tgl_faktur' => 'required|date|date_format:Y-m-d',
-            'kode_tjen' => 'required|max:1',
-            'total_bruto' => 'required|numeric',
-            'total_diskon' => 'required|numeric',
-            'total_jumlah' => 'required|numeric',
-        ]);
-
-        try {
-            // Cari faktur berdasarkan no_faktur yang diinput
-            $nF = t_jual::where('no_faktur', $request->no_faktur)->first();
-
-            if (!$nF) {
-                return response()->json(['success' => false, 'message' => 'Faktur tidak ditemukan'], 404);
-            }
-
-            // Update faktur dengan data yang divalidasi
-            $nF->update($validateUp);
-
-            // Kembalikan pesan sukses ke halaman sebelumnya
-            return redirect()->back()->with('success', 'Faktur berhasil diperbarui');
-        } catch (\Exception $e) {
-            // Kembalikan pesan error jika terjadi exception
-            return back()->withErrors(['message' => 'Terjadi kesalahan saat memperbarui faktur: ' . $e->getMessage()]);
-        }
-    }
 
     public function cariData(Request $request)
     {
@@ -189,29 +263,56 @@ class transaksiController extends Controller
         }
     }
 
-    public function hapusBarang($id)
-    {
-        $transaksi = t_djual::find($id);
+    // public function hapusBarang($id)
+    // {
+    //     $transaksi = t_djual::find($id);
 
-        if ($transaksi) {
-            $transaksi->delete(); // Hapus data
+    //     if ($transaksi) {
+    //         $transaksi->delete(); // Hapus data
+    //         return response()->json([
+    //             'status' => 200,
+    //             'message' => 'Barang berhasil dihapus.'
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'status' => 404,
+    //             'message' => 'Barang tidak ditemukan.'
+    //         ]);
+    //     }
+    // }
+
+    public function hapusBarang($no_faktur, $kode_barang)
+    {
+        try {
+            // Mencari item berdasarkan no_faktur dan kode_barang
+            $transaksi = t_djual::where('no_faktur', $no_faktur)
+                            ->where('kode_barang', $kode_barang)
+                            ->first();
+
+            if ($transaksi) {
+                $transaksi->delete(); // Hapus data
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Barang berhasil dihapus.'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Barang tidak ditemukan.'
+                ]);
+            }
+        } catch (\Exception $e) {
             return response()->json([
-                'status' => 200,
-                'message' => 'Barang berhasil dihapus.'
-            ]);
-        } else {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Barang tidak ditemukan.'
+                'status' => 500,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ]);
         }
     }
 
-    public function updateBarang(Request $request, $id)
+    public function updateBarang(Request $request, $no_faktur, $kode_barang)
     {
-        // Validasi data yang diterima dari permintaan
+        // Validasi data yang masuk
         $validatedData = $request->validate([
-            'kode_barang' => 'required|max:10',
             'harga' => 'required|numeric',
             'qty' => 'required|numeric',
             'diskon' => 'required|numeric',
@@ -219,14 +320,14 @@ class transaksiController extends Controller
             'jumlah' => 'required|numeric',
         ]);
 
-        // Cari data berdasarkan ID
-        $transaksi = t_djual::find($id);
+        // Mencari item berdasarkan no_faktur dan kode_barang
+        $transaksi = t_djual::where('no_faktur', $no_faktur)
+                            ->where('kode_barang', $kode_barang)
+                            ->first();
 
         if ($transaksi) {
             // Update data barang
             $transaksi->update($validatedData);
-
-            $transaksi->load('barang');
 
             return response()->json([
                 'status' => 200,

@@ -1,8 +1,8 @@
 const nomFaktur = document.querySelector('#no_faktur')
 
 //input data no_faktur tanpa total bruto, total diskon, dan total jumlah
-document.querySelector('#inputH').addEventListener('click', function(){
-    document.querySelector('#inputH').disabled = true
+document.querySelector('#simpanH').addEventListener('click', function(){
+    // document.querySelector('#inputH').disabled = true
     // console.log('test')
 
     const data = {
@@ -11,9 +11,9 @@ document.querySelector('#inputH').addEventListener('click', function(){
         tgl_faktur: document.querySelector('#tgl_faktur').value,
         kode_customer: document.querySelector('#kode_customer').value,
         kode_tjen: document.querySelector('#kode_tjen').value,
-        total_bruto: parseFloat(document.querySelector('#total_bruto').value.replace(/Rp. /, '').replace(/,/g, '')) || 0,
-        total_diskon: parseFloat(document.querySelector('#total_diskon').value.replace(/Rp. /, '').replace(/,/g, '')) || 0,
-        total_jumlah: parseFloat(document.querySelector('#total_jumlah').value.replace(/Rp. /, '').replace(/,/g, '')) || 0
+        total_bruto: getNumberFromRupiah(document.querySelector('#total_bruto').value) || 0,
+        total_diskon: getNumberFromRupiah(document.querySelector('#total_diskon').value) || 0,
+        total_jumlah: getNumberFromRupiah(document.querySelector('#total_jumlah').value) || 0
     };
     console.log(data)
 
@@ -66,7 +66,7 @@ function fetchData() {
     .then(response => response.json())
     // .then(result => console.log(result))
     .then(result => {
-        console.log('Result:', result); // Debugging output
+        console.log('Result:', result.data); // Debugging output
         if (result && result.status === 200) { // Pastikan result ada
             alert(result.message); // Alert jika data ditemukan
             btnDetail.hidden = false
@@ -76,9 +76,12 @@ function fetchData() {
             document.getElementById('tgl_faktur').value = new Date(result.data.tgl_faktur).toISOString().split('T')[0]; 
             document.getElementById('kode_customer').value = result.data.kode_customer;
             document.getElementById('kode_tjen').value = result.data.kode_tjen;
-            document.getElementById('total_bruto').value = 'Rp. '+Math.round(result.data.total_bruto)
-            document.getElementById('total_jumlah').value = 'Rp. '+Math.round(result.data.total_jumlah)
-            document.getElementById('total_diskon').value = 'Rp. '+Math.round(result.data.total_diskon)
+            console.log(document.getElementById('total_bruto').value = rupiah(result.data.total_bruto))
+            document.getElementById('total_jumlah').value = rupiah(result.data.total_jumlah)
+            document.getElementById('total_diskon').value = rupiah(result.data.total_diskon)
+            // const total_bruto = rupiah(document.querySelector('#total_bruto').value);
+            // const total_jumlah = rupiah(document.querySelector('#total_jumlah').value)
+            // const total_diskon = rupiah(document.querySelector('#total_diskon').value)
 
             btnDetail.addEventListener('click', function(){
                 updateTable(result.data.detail_penjualan); // Memperbarui tabel dengan data
@@ -138,9 +141,9 @@ document.querySelector('#editH').addEventListener('click', function() {
     const tgl_faktur = document.querySelector('#tgl_faktur').value;
     const kode_customer = document.querySelector('#kode_customer').value;
     const kode_tjen = document.querySelector('#kode_tjen').value;
-    const total_bruto = parseInt(document.querySelector('#total_bruto').value.replace(/[^0-9]/g, ''));
-    const total_jumlah = parseInt(document.querySelector('#total_jumlah').value.replace(/[^0-9]/g, ''))
-    const total_diskon = parseInt(document.querySelector('#total_diskon').value.replace(/[^0-9]/g, ''))
+    const total_bruto = getNumberFromRupiah(document.querySelector('#total_bruto').value);
+    const total_jumlah = getNumberFromRupiah(document.querySelector('#total_jumlah').value)
+    const total_diskon = getNumberFromRupiah(document.querySelector('#total_diskon').value)
 
     const updateFakturRoute = document.querySelector('meta[name="update-faktur-route"]').getAttribute('content');
 
@@ -154,6 +157,7 @@ document.querySelector('#editH').addEventListener('click', function() {
             total_jumlah: total_jumlah,
             total_diskon: total_diskon,
         };
+        console.log(editData)
 
         fetch(`${updateFakturRoute}/${no_faktur}`, {
             method: 'PUT',
@@ -183,11 +187,11 @@ function populateDetailForm(item) {
     // Mengisi form atau card dengan data barang yang dipilih
     document.getElementById('kode_barang').value = item.kode_barang;
     document.getElementById('nama_barang').value = item.barang ? item.barang.nama_barang : 'Nama tidak tersedia';
-    document.getElementById('harga_barang').value = Math.round(item.harga)
+    document.getElementById('harga_barang').value = rupiah(item.harga)
     document.getElementById('qty').value = Math.round(item.qty)
-    document.getElementById('diskon').value = Math.round(item.diskon)
-    document.getElementById('bruto').value = item.bruto;
-    document.getElementById('jumlah').value = item.jumlah;
+    document.getElementById('diskon').value = item.diskon
+    document.getElementById('bruto').value = rupiah(item.bruto);
+    document.getElementById('jumlah').value = rupiah(item.jumlah);
 
     document.getElementById('t_djual_id').value = item.id
 }
@@ -209,8 +213,10 @@ function updateTable(data) {
         document.getElementById('aksi').hidden = false;
 
         detailData.forEach((item, index) => {
+            console.log(item)
             // Mencari baris yang ada berdasarkan ID
-            const existingRow = tableBody.querySelector(`tr[data-id="${item.id}"]`);
+            const existingRow = tableBody.querySelector(`tr[data-id="${item.no_faktur}_${item.kode_barang}"]`);
+            console.log(existingRow)
 
             // Jika baris sudah ada, update isi baris tersebut
             if (existingRow) {
@@ -218,11 +224,11 @@ function updateTable(data) {
                     <td>${item.no_faktur}</td>
                     <td>${item.kode_barang}</td>
                     <td>${item.barang ? item.barang.nama_barang : 'Nama tidak tersedia'}</td>
-                    <td>Rp. ${Math.round(item.harga)}</td>
+                    <td>${rupiah(item.harga)}</td>
                     <td>${Math.round(item.qty)}</td>
-                    <td>${Math.round(item.diskon)}%</td>
-                    <td>Rp. ${Math.round(item.bruto)}</td>
-                    <td>Rp. ${Math.round(item.jumlah)}</td>
+                    <td>${item.diskon}%</td>
+                    <td>${rupiah(item.bruto)}</td>
+                    <td>${rupiah(item.jumlah)}</td>
                     <td>
                         <button type="button" class="btn-detail" data-index="${index}">Detail</button>
                     </td>
@@ -230,15 +236,15 @@ function updateTable(data) {
             } else {
                 // Jika baris tidak ada, tambahkan baris baru
                 const row = `
-                    <tr data-id="${item.id}">
+                    <tr data-id="${item.no_faktur}_${item.kode_barang}">
                         <td>${item.no_faktur}</td>
                         <td>${item.kode_barang}</td>
                         <td>${item.barang ? item.barang.nama_barang : 'Nama tidak tersedia'}</td>
-                        <td>Rp. ${Math.round(item.harga)}</td>
+                        <td>${rupiah(item.harga)}</td>
                         <td>${Math.round(item.qty)}</td>
-                        <td>${Math.round(item.diskon)}%</td>
-                        <td>Rp. ${Math.round(item.bruto)}</td>
-                        <td>Rp. ${Math.round(item.jumlah)}</td>
+                        <td>${item.diskon}%</td>
+                        <td>${rupiah(item.bruto)}</td>
+                        <td>${rupiah(item.jumlah)}</td>
                         <td>
                             <button type="button" class="btn-detail" data-index="${index}">Detail</button>
                         </td>
@@ -257,6 +263,11 @@ function updateTable(data) {
                     document.getElementById('editB').disabled = false;
                     document.getElementById('hapusB').disabled = false;
                     batalButton.disabled=false
+
+                    document.querySelector('#kode_barang').readOnly = false
+                    document.querySelector('#qty').readOnly = false
+                    document.querySelector('#diskon').readOnly = false
+                    inputButton.disabled = true
                 }
             });
         });
@@ -264,3 +275,83 @@ function updateTable(data) {
         batalnRestUi(); // Fungsi ini diharapkan mengatur UI saat tidak ada data
     }
 }
+
+// function updateTable(data) {
+//     const tableBody = document.querySelector('tbody');
+
+//     // Jika data tidak kosong
+//     if (data && data.length > 0) {  // Pastikan data adalah array dan memiliki elemen
+//         let detailData = data;
+
+//         // Debugging: Cek isi data yang diterima
+//         console.log("Data yang diterima:", detailData);
+
+//         document.getElementById('aksi').hidden = false;
+
+//         detailData.forEach((item, index) => {
+//             console.log("Memproses item:", item);
+
+//             // Mencari baris yang ada berdasarkan ID
+//             const existingRow = tableBody.querySelector(`tr[data-id="${item.no_faktur}_${item.kode_barang}"]`);
+            
+//             // Jika baris sudah ada, update isi baris tersebut
+//             if (existingRow) {
+//                 existingRow.innerHTML = `
+//                     <td>${item.no_faktur}</td>
+//                     <td>${item.kode_barang}</td>
+//                     <td>${item.barang ? item.barang.nama_barang : 'Nama tidak tersedia'}</td>
+//                     <td>${rupiah(item.harga)}</td>
+//                     <td>${Math.round(item.qty)}</td>
+//                     <td>${item.diskon}%</td>
+//                     <td>${rupiah(item.bruto)}</td>
+//                     <td>${rupiah(item.jumlah)}</td>
+//                     <td>
+//                         <button type="button" class="btn-detail" data-index="${index}">Detail</button>
+//                     </td>
+//                 `;
+//             } else {
+//                 // Jika baris tidak ada, tambahkan baris baru
+//                 const row = `
+//                     <tr data-id="${item.no_faktur}_${item.kode_barang}">
+//                         <td>${item.no_faktur}</td>
+//                         <td>${item.kode_barang}</td>
+//                         <td>${item.barang ? item.barang.nama_barang : 'Nama tidak tersedia'}</td>
+//                         <td>${rupiah(item.harga)}</td>
+//                         <td>${Math.round(item.qty)}</td>
+//                         <td>${item.diskon}%</td>
+//                         <td>${rupiah(item.bruto)}</td>
+//                         <td>${rupiah(item.jumlah)}</td>
+//                         <td>
+//                             <button type="button" class="btn-detail" data-index="${index}">Detail</button>
+//                         </td>
+//                     </tr>`;
+//                 tableBody.innerHTML += row;
+//             }
+//         });
+
+//         // Tambahkan event listener untuk tombol detail
+//         document.querySelectorAll('.btn-detail').forEach(button => {
+//             button.addEventListener('click', function() {
+//                 const itemIndex = this.getAttribute('data-index'); // Mengambil index item
+//                 console.log(this.getAttribute('data-id'))
+//                 const selectedItem = detailData[itemIndex]; // Mengambil data barang berdasarkan index
+//                 console.log(selectedItem)
+//                 if (selectedItem) {
+//                     populateDetailForm(selectedItem);
+//                     document.getElementById('editB').disabled = false;
+//                     document.getElementById('hapusB').disabled = false;
+//                     batalButton.disabled = false;
+
+//                     document.querySelector('#kode_barang').readOnly = false;
+//                     document.querySelector('#qty').readOnly = false;
+//                     document.querySelector('#diskon').readOnly = false;
+//                     inputButton.disabled = true;
+//                 }
+//             });
+//         });
+//     } else {
+//         console.log("Tidak ada data untuk ditampilkan");
+//         batalnRestUi(); // Fungsi ini diharapkan mengatur UI saat tidak ada data
+//     }
+// }
+
